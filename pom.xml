@@ -12,7 +12,6 @@
         <slf4j.api.version>1.7.10</slf4j.api.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.eclipse.leshan</groupId>
@@ -29,7 +28,6 @@
             <artifactId>commons-csv</artifactId>
             <version>${commons.csv.version}</version>
         </dependency>
-
         <!-- runtime dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -38,7 +36,6 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -77,6 +74,27 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>io.zeelos.leshan.client.demo.LeshanClientDemo</mainClass>
+                    <!-- optional -->
+                    <workingDirectory>/tmp</workingDirectory>
+                    <arguments>
+                        <argument>-u</argument>
+                        <argument>zeelos-upboard</argument>
+                    </arguments>
+                </configuration>
             </plugin>
         </plugins>
     </build>
