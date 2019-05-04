@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013-2015 Sierra Wireless and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * and Eclipse Distribution License v1.0 which accompany this distribution.
- * 
+ *
  * The Eclipse Public License is available at
  *    http://www.eclipse.org/legal/epl-v10.html
  * and the Eclipse Distribution License is available at
  *    http://www.eclipse.org/org/documents/edl-v10.html.
- * 
+ *
  * Contributors:
  *     Zebra Technologies - initial API and implementation
  *     Sierra Wireless, - initial API and implementation
@@ -18,35 +18,7 @@
 
 package io.zeelos.leshan.client.demo;
 
-import static org.eclipse.leshan.LwM2mId.DEVICE;
-import static org.eclipse.leshan.LwM2mId.LOCATION;
-import static org.eclipse.leshan.LwM2mId.SECURITY;
-import static org.eclipse.leshan.LwM2mId.SERVER;
-import static org.eclipse.leshan.client.object.Security.noSec;
-import static org.eclipse.leshan.client.object.Security.noSecBootstap;
-import static org.eclipse.leshan.client.object.Security.psk;
-import static org.eclipse.leshan.client.object.Security.pskBootstrap;
-import static org.eclipse.leshan.client.object.Security.rpk;
-import static org.eclipse.leshan.client.object.Security.rpkBootstrap;
-import static org.eclipse.leshan.client.object.Security.x509;
-import static org.eclipse.leshan.client.object.Security.x509Bootstrap;
-
-import java.io.File;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
-import java.security.interfaces.ECPublicKey;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
-import java.util.UUID;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.leshan.LwM2m;
 import org.eclipse.leshan.client.californium.LeshanClient;
@@ -63,7 +35,21 @@ import org.eclipse.leshan.util.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/* 
+import java.io.File;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPublicKey;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.UUID;
+
+import static org.eclipse.leshan.LwM2mId.*;
+import static org.eclipse.leshan.client.object.Security.*;
+
+/*
  * Adopted from the original leshan-client-demo found in the leshan repo
  */
 
@@ -71,7 +57,7 @@ public class LeshanClientDemo {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeshanClientDemo.class);
 
-    private final static String[] modelPaths = new String[] { "3303.xml" };
+    private final static String[] modelPaths = new String[]{"3303.xml"};
 
     private static final int OBJECT_ID_TEMPERATURE_SENSOR = 3303;
     private final static String DEFAULT_ENDPOINT = "LeshanClientDemo";
@@ -344,9 +330,9 @@ public class LeshanClientDemo {
     }
 
     public static void createAndStartClient(String endpoint, String localAddress, int localPort, boolean needBootstrap,
-            String serverURI, byte[] pskIdentity, byte[] pskKey, PrivateKey clientPrivateKey, PublicKey clientPublicKey,
-            PublicKey serverPublicKey, X509Certificate clientCertificate, X509Certificate serverCertificate,
-            Float latitude, Float longitude, float scaleFactor, String sensor1Input, String sensor2Input)
+                                            String serverURI, byte[] pskIdentity, byte[] pskKey, PrivateKey clientPrivateKey, PublicKey clientPublicKey,
+                                            PublicKey serverPublicKey, X509Certificate clientCertificate, X509Certificate serverCertificate,
+                                            Float latitude, Float longitude, float scaleFactor, String sensor1Input, String sensor2Input)
             throws CertificateEncodingException {
 
         locationInstance = new MyLocation(latitude, longitude, scaleFactor);
@@ -390,13 +376,13 @@ public class LeshanClientDemo {
                 initializer.setInstancesForObject(SERVER, new Server(123, 30, BindingMode.U, false));
             }
         }
-        initializer.setClassForObject(DEVICE, MyDevice.class);
+        initializer.setInstancesForObject(DEVICE, new MyDevice());
         initializer.setInstancesForObject(LOCATION, locationInstance);
         initializer.setInstancesForObject(OBJECT_ID_TEMPERATURE_SENSOR, new RandomTemperatureSensor(1, sensor1Input),
                 new RandomTemperatureSensor(2, sensor2Input));
         List<LwM2mObjectEnabler> enablers = initializer.create(SECURITY, SERVER, DEVICE, LOCATION,
                 OBJECT_ID_TEMPERATURE_SENSOR);
-                
+
         // Create CoAP Config
         NetworkConfig coapConfig;
         File configFile = new File(NetworkConfig.DEFAULT_FILE_NAME);

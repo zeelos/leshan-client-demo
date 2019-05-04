@@ -1,12 +1,13 @@
 package io.zeelos.leshan.client.demo;
 
-import java.util.Date;
-import java.util.Random;
-
+import org.eclipse.leshan.client.request.ServerIdentity;
 import org.eclipse.leshan.client.resource.BaseInstanceEnabler;
 import org.eclipse.leshan.core.response.ReadResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.Random;
 
 public class MyLocation extends BaseInstanceEnabler {
 
@@ -39,34 +40,34 @@ public class MyLocation extends BaseInstanceEnabler {
     }
 
     @Override
-    public ReadResponse read(int resourceid) {
+    public ReadResponse read(ServerIdentity identity, int resourceid) {
         LOG.info("Read on Location Resource " + resourceid);
         switch (resourceid) {
-        case 0:
-            return ReadResponse.success(resourceid, getLatitude());
-        case 1:
-            return ReadResponse.success(resourceid, getLongitude());
-        case 5:
-            return ReadResponse.success(resourceid, getTimestamp());
-        default:
-            return super.read(resourceid);
+            case 0:
+                return ReadResponse.success(resourceid, getLatitude());
+            case 1:
+                return ReadResponse.success(resourceid, getLongitude());
+            case 5:
+                return ReadResponse.success(resourceid, getTimestamp());
+            default:
+                return super.read(identity, resourceid);
         }
     }
 
     public void moveLocation(String nextMove) {
         switch (nextMove.charAt(0)) {
-        case 'w':
-            moveLatitude(1.0f);
-            break;
-        case 'a':
-            moveLongitude(-1.0f);
-            break;
-        case 's':
-            moveLatitude(-1.0f);
-            break;
-        case 'd':
-            moveLongitude(1.0f);
-            break;
+            case 'w':
+                moveLatitude(1.0f);
+                break;
+            case 'a':
+                moveLongitude(-1.0f);
+                break;
+            case 's':
+                moveLatitude(-1.0f);
+                break;
+            case 'd':
+                moveLongitude(1.0f);
+                break;
         }
     }
 

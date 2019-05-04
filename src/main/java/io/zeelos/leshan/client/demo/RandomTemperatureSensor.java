@@ -1,5 +1,11 @@
 package io.zeelos.leshan.client.demo;
 
+import org.eclipse.leshan.client.request.ServerIdentity;
+import org.eclipse.leshan.client.resource.BaseInstanceEnabler;
+import org.eclipse.leshan.core.response.ExecuteResponse;
+import org.eclipse.leshan.core.response.ReadResponse;
+import org.eclipse.leshan.util.NamedThreadFactory;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -7,11 +13,6 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import org.eclipse.leshan.client.resource.BaseInstanceEnabler;
-import org.eclipse.leshan.core.response.ExecuteResponse;
-import org.eclipse.leshan.core.response.ReadResponse;
-import org.eclipse.leshan.util.NamedThreadFactory;
 
 public class RandomTemperatureSensor extends BaseInstanceEnabler {
 
@@ -31,7 +32,10 @@ public class RandomTemperatureSensor extends BaseInstanceEnabler {
 
     private int curIndex = 0;
 
-    public RandomTemperatureSensor(long period, String model ) {
+    public RandomTemperatureSensor() {
+        this(2, "trendStatUpwardLowVar");
+    }
+    public RandomTemperatureSensor(long period, String model) {
         try {
             datapoints = SimulationDataReader.getData(model + ".csv");
         } catch (Exception e) {
@@ -49,29 +53,29 @@ public class RandomTemperatureSensor extends BaseInstanceEnabler {
     }
 
     @Override
-    public synchronized ReadResponse read(int resourceId) {
+    public synchronized ReadResponse read(ServerIdentity identity, int resourceId) {
         switch (resourceId) {
-        case MIN_MEASURED_VALUE:
-            return ReadResponse.success(resourceId, getTwoDigitValue(minMeasuredValue));
-        case MAX_MEASURED_VALUE:
-            return ReadResponse.success(resourceId, getTwoDigitValue(maxMeasuredValue));
-        case SENSOR_VALUE:
-            return ReadResponse.success(resourceId, getTwoDigitValue(currentTemp));
-        case UNITS:
-            return ReadResponse.success(resourceId, UNIT_CELSIUS);
-        default:
-            return super.read(resourceId);
+            case MIN_MEASURED_VALUE:
+                return ReadResponse.success(resourceId, getTwoDigitValue(minMeasuredValue));
+            case MAX_MEASURED_VALUE:
+                return ReadResponse.success(resourceId, getTwoDigitValue(maxMeasuredValue));
+            case SENSOR_VALUE:
+                return ReadResponse.success(resourceId, getTwoDigitValue(currentTemp));
+            case UNITS:
+                return ReadResponse.success(resourceId, UNIT_CELSIUS);
+            default:
+                return super.read(identity, resourceId);
         }
     }
 
     @Override
-    public synchronized ExecuteResponse execute(int resourceId, String params) {
+    public synchronized ExecuteResponse execute(ServerIdentity identity, int resourceId, String params) {
         switch (resourceId) {
-        case RESET_MIN_MAX_MEASURED_VALUES:
-            resetMinMaxMeasuredValues();
-            return ExecuteResponse.success();
-        default:
-            return super.execute(resourceId, params);
+            case RESET_MIN_MAX_MEASURED_VALUES:
+                resetMinMaxMeasuredValues();
+                return ExecuteResponse.success();
+            default:
+                return super.execute(identity, resourceId, params);
         }
     }
 
